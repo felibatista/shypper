@@ -1,17 +1,17 @@
 require("dotenv").config();
-import path from "path";
+
 import express, { NextFunction, Request, Response } from "express";
 import morgan from "morgan";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import dataRoute from "./routes/data.route";
+import urlRoute from "./routes/url.route";
+import connectDB from "./orm";
 
 const app = express();
 
 app.use(cookieParser());
 app.use(express.json());
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
-app.use("/api/images", express.static(path.join(__dirname, "../public")));
 
 app.use(
   cors({
@@ -19,12 +19,12 @@ app.use(
   })
 );
 
-app.use("/api/data", dataRoute);
+app.use("/api/url", urlRoute);
 
 app.get("/api/healthchecker", (req: Request, res: Response) => {
   res.status(200).json({
     status: "success",
-    message: "Clockech API is running",
+    message: "SHYPPER API is running",
   });
 });
 
@@ -49,4 +49,5 @@ const port = process.env.PORT || "8000";
 
 app.listen(parseInt(port), "0.0.0.0", async () => {
   console.log(`✅ Server started on port: ${port}`);
+  connectDB();
 });
